@@ -1,0 +1,30 @@
+---
+- name: Deploy hawaa
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Start Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull image
+      docker_image:
+        name: DOCKERHUB_USERNAME/hawaa:latest
+        source: pull
+
+    - name: Run container
+      docker_container:
+        name: hawaa
+        image: DOCKERHUB_USERNAME/hawaa:latest
+        ports:
+          - "80:80"
+        restart_policy: always
+        state: started
